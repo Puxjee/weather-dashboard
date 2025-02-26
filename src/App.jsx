@@ -3,14 +3,18 @@ import SearchBar from "./components/SearchBar"
 import WeatherDisplay from "./components/WeatherDisplay"
 import ForecastDisplay from "./components/ForecastDisplay"
 import { fetchWeather } from "./services/weatherApi"
+import FavoritesBar from "./components/FavoritesBar"
 
 const App = () => {
   const [location, setLocation] = useState("")
-  const [weatherData, setWeatherData] = useState([])
+  const [weatherData, setWeatherData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
   const handleSearch = async (searchLocation) => {
+    if (!searchLocation || searchLocation.trim() === "") {
+      return // Don't search if location is empty
+    }
     setLocation(searchLocation)
     setLoading(true)
     setError(null)
@@ -19,6 +23,7 @@ const App = () => {
       const data = await fetchWeather(searchLocation)
       setWeatherData(data)
     } catch (error) {
+      console.error("Error fetching weather:", error)
       setError(error.message)
       setWeatherData(null)
     } finally {
@@ -40,6 +45,11 @@ const App = () => {
 
           <SearchBar onSearch={handleSearch} />
         </header>
+
+        <div className='mb-6'>
+          <FavoritesBar onSelectLocation={handleSearch} />
+        </div>
+
         {location && (
           <div className='text-center text-gray-700 mb-4'>
             Showing weather for:{" "}
@@ -66,8 +76,8 @@ const App = () => {
 
         {weatherData && !loading && !error && (
           <>
-            <WeatherDisplay weatherData={weatherData} />
-            <ForecastDisplay weatherData={weatherData} />
+            <WeatherDisplay weatherData={weatherData.current} />
+            <ForecastDisplay forecast={weatherData.forecast} />
           </>
         )}
       </div>
