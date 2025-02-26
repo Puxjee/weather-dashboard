@@ -1,7 +1,7 @@
 import React from "react"
 
 const SearchBar = ({ onSearch }) => {
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     const location = e.target.elements.location.value.trim()
     if (location) {

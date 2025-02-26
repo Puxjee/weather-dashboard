@@ -1,10 +1,29 @@
 import React, { useState } from "react"
 import SearchBar from "./components/SearchBar"
+import WeatherDisplay from "./components/WeatherDisplay"
+import ForecastDisplay from "./components/ForecastDisplay"
+import { fetchWeather } from "./services/weatherApi"
 
 const App = () => {
   const [location, setLocation] = useState("")
-  const handleSearch = (searchLocation) => {
+  const [weatherData, setWeatherData] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+  const handleSearch = async (searchLocation) => {
     setLocation(searchLocation)
+    setLoading(true)
+    setError(null)
+
+    try {
+      const data = await fetchWeather(searchLocation)
+      setWeatherData(data)
+    } catch (error) {
+      setError(error.message)
+      setWeatherData(null)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -21,6 +40,21 @@ const App = () => {
             Showing weather for:{" "}
             <span className='font-semibold'>{location}</span>
           </div>
+        )}
+
+        {loading && (
+          <div className='text-center py-4'>Loading weather data...</div>
+        )}
+
+        {error && (
+          <div className='text-center py-4 text-red-500'>Error: {error}</div>
+        )}
+
+        {weatherData && !loading && !error && (
+          <>
+            <WeatherDisplay weatherData={weatherData} />
+            <ForecastDisplay weatherData={weatherData} />
+          </>
         )}
       </div>
     </div>
