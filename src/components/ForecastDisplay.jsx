@@ -23,7 +23,7 @@ const ForecastDisplay = ({ weatherData }) => {
           return (
             <div
               key={forecast.dt}
-              className='bg-blue-50 p-3 rounded-lg text-center'
+              className='bg-blue-50 p-3 rounded-lg text-center transition-all duration-300 hover:shadow-md hover:bg-blue-100'
             >
               <p className='font-medium'>{day}</p>
               <img
